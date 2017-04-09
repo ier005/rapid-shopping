@@ -8,12 +8,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.net.URL;
-import java.net.URLConnection;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 
-import org.jsoup.Jsoup
+import java.io.IOException;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -36,34 +34,16 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onClick(View v)
         {
-            String url = "http://search.jd.com";
-            String result = "";
-            BufferedReader in = null;
+            Document doc = null;
             try {
-                URL realUrl = new URL(url);
-                URLConnection connection = realUrl.openConnection();
-                connection.connect();
-                in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-                String line;
-                while ((line = in.readLine()) != null) {
-                    result += line;
-                }
-                txt.setText(result);
-            }
-            catch (Exception e) {
-
-                txt.setText("Wrong!" + e);
+                doc = Jsoup.connect("https://search.jd.com/Search?keyword=英文&enc=utf-8&pvid=19314f6c144a42f8aeaf082d2a905af6").get();
+                String title = doc.title();
+                txt.setText(title);
+            } catch (Exception e) {
                 e.printStackTrace();
+                txt.setText("Error: " + e);
             }
-            finally {
-                try {
-                    if (in != null)
-                        in.close();
-                }
-                catch (Exception e2) {
-                    e2.printStackTrace();
-                }
-            }
+
         }
     }
 }
