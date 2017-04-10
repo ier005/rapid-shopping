@@ -10,8 +10,8 @@ import android.widget.TextView;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-
-import java.io.IOException;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -36,9 +36,18 @@ public class MainActivity extends AppCompatActivity {
         {
             Document doc = null;
             try {
-                doc = Jsoup.connect("https://search.jd.com/Search?keyword=英文&enc=utf-8&pvid=19314f6c144a42f8aeaf082d2a905af6").get();
-                String title = doc.title();
-                txt.setText(title);
+                TextView editText = (TextView) findViewById(R.id.editText);
+                String url1 = "https://search.jd.com/Search?keyword=";
+                String url2 = "&enc=utf-8&pvid=19314f6c144a42f8aeaf082d2a905af6";
+                doc = Jsoup.connect(url1 + editText.getText() + url2).get();
+                Elements items = doc.select("li.gl-item");
+                String info = "";
+                for (Element item : items) {
+                    info += item.select("div.p-price").text();
+                    info += item.select("div.p-name").select("em").text();
+                    info += "\n";
+                }
+                txt.setText(info);
             } catch (Exception e) {
                 e.printStackTrace();
                 txt.setText("Error: " + e);
