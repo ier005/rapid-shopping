@@ -2,6 +2,7 @@ package com.example.test.myapplication;
 
 
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Bundle;
@@ -20,6 +21,10 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.List;
 import java.util.Vector;
 
@@ -46,16 +51,18 @@ public class MainActivity extends AppCompatActivity {
 
                         try {
                             TextView editText = (TextView) findViewById(R.id.editText);
-                            String url1 = "https://search.jd.com/Search?keyword=";
-                            String url2 = "&enc=utf-8&pvid=19314f6c144a42f8aeaf082d2a905af6";
+                            String url1 = "http://search.yhd.com/c0-0/k";
+                            String url2 = "/?tp=2279.1.12.0.3.LhNe3k^-10-CDFEj";
                             doc = Jsoup.connect(url1 + editText.getText() + url2).get();
-                            Elements items = doc.select("li.gl-item");
+                            String urlp = "";
+                            Elements items = doc.select("div.mod_search_pro");
                             goods.clear();
                             for (Element item : items) {
                                 Good good = new Good();
-                                good.price = item.select("div.p-price").text();
-                                good.name = item.select("div.p-name").select("em").text();
-                                //good.Bitmap=    download bitmap
+                                good.price = item.select("p.proName.clearfix").text();
+                                good.name  = item.select("p.proPrice").select("em").text();
+                                urlp = item.select("a img[src]").attr("src");
+                                good.image = getBitmap("http:"+urlp);
                                 goods.add(good);
                             }
                             handler.sendEmptyMessage(0x0001);
@@ -139,4 +146,20 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    public Bitmap getBitmap(String path) throws IOException {
+        try {
+            URL url = new URL(path);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setConnectTimeout(5000);
+            conn.setRequestMethod("GET");
+            if (conn.getResponseCode() == 200) {
+                InputStream inputStream = conn.getInputStream();
+                Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
+                return bitmap;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 }
