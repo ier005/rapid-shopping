@@ -1,6 +1,7 @@
 package com.example.test.myapplication;
 
 
+import android.graphics.Bitmap;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Bundle;
@@ -9,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -53,6 +55,7 @@ public class MainActivity extends AppCompatActivity {
                                 Good good = new Good();
                                 good.price = item.select("div.p-price").text();
                                 good.name = item.select("div.p-name").select("em").text();
+                                //good.Bitmap=    download bitmap
                                 goods.add(good);
                             }
                             handler.sendEmptyMessage(0x0001);
@@ -83,12 +86,14 @@ public class MainActivity extends AppCompatActivity {
     {
         String name;
         String price;
+        Bitmap image;
     }
 
     class ViewHolder
     {
         TextView name;
         TextView price;
+        ImageView image;
     }
 
     class LVAdapter extends BaseAdapter
@@ -120,6 +125,7 @@ public class MainActivity extends AppCompatActivity {
                 viewHolder = new ViewHolder();
                 viewHolder.name = (TextView) convertView.findViewById(R.id.tv_name);
                 viewHolder.price = (TextView) convertView.findViewById(R.id.tv_price);
+                viewHolder.image = (ImageView) convertView.findViewById(R.id.good_image);
                 convertView.setTag(viewHolder);
             }
             else {
@@ -128,6 +134,7 @@ public class MainActivity extends AppCompatActivity {
             Good good = goods.get(position);
             viewHolder.name.setText(good.name);
             viewHolder.price.setText(good.price);
+            viewHolder.image.setImageBitmap(good.image);
             return convertView;
         }
     }
