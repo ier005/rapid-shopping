@@ -1,4 +1,3 @@
 # rapid-shopping
 
-task1: front-end develop
-task2: web-crawler
+The information from yhd can be grabbed and displayed, including name, price and graph.
