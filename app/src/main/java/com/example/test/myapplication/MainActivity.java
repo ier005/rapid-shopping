@@ -61,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
                                 Good good = new Good();
                                 good.name = item.select("p.proName.clearfix").text();
                                 good.price  = item.select("p.proPrice").select("em").text();
-                                urlp = item.select("a img[src]").attr("src");
+                                urlp = item.select("a img[style]").attr("src")+item.select("a img[style]").attr("original");
                                 good.image = getBitmap("http:"+urlp);
                                 goods.add(good);
                             }
