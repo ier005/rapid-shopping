@@ -1,8 +1,10 @@
 package com.example.test.myapplication;
 
 
+import android.app.ProgressDialog;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Bundle;
@@ -25,7 +27,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.List;
 import java.util.Vector;
 
 public class MainActivity extends AppCompatActivity {
@@ -34,6 +35,7 @@ public class MainActivity extends AppCompatActivity {
     ListView goodsList;
     Vector<Good> goods = new Vector<>();
     LVAdapter adapter;
+    ProgressDialog pd;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,11 +46,13 @@ public class MainActivity extends AppCompatActivity {
         bn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                pd = ProgressDialog.show(MainActivity.this, "Searching", "Wait plz... :)");
+
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        Document doc;
 
+                        Document doc;
                         try {
                             TextView editText = (TextView) findViewById(R.id.editText);
                             String url1 = "http://search.yhd.com/c0-0/k";
@@ -63,6 +67,7 @@ public class MainActivity extends AppCompatActivity {
                                 good.price  = item.select("p.proPrice").select("em").text();
                                 urlp = item.select("a img[style]").attr("src")+item.select("a img[style]").attr("original");
                                 good.image = getBitmap("http:"+urlp);
+                                good.logo = getDrawable(R.drawable.yhd);
                                 goods.add(good);
                             }
                             handler.sendEmptyMessage(0x0001);
@@ -83,6 +88,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void handleMessage(Message msg) {
                 if (msg.what == 0x0001) {
+                    pd.dismiss();
                     adapter.notifyDataSetChanged();
                 }
             }
@@ -94,6 +100,7 @@ public class MainActivity extends AppCompatActivity {
         String name;
         String price;
         Bitmap image;
+        Drawable logo;
     }
 
     class ViewHolder
@@ -101,6 +108,7 @@ public class MainActivity extends AppCompatActivity {
         TextView name;
         TextView price;
         ImageView image;
+        ImageView logo;
     }
 
     class LVAdapter extends BaseAdapter
@@ -133,6 +141,7 @@ public class MainActivity extends AppCompatActivity {
                 viewHolder.name = (TextView) convertView.findViewById(R.id.tv_name);
                 viewHolder.price = (TextView) convertView.findViewById(R.id.tv_price);
                 viewHolder.image = (ImageView) convertView.findViewById(R.id.good_image);
+                viewHolder.logo = (ImageView) convertView.findViewById(R.id.logo);
                 convertView.setTag(viewHolder);
             }
             else {
@@ -142,6 +151,7 @@ public class MainActivity extends AppCompatActivity {
             viewHolder.name.setText(good.name);
             viewHolder.price.setText(good.price);
             viewHolder.image.setImageBitmap(good.image);
+            viewHolder.logo.setImageDrawable(good.logo);
             return convertView;
         }
     }
