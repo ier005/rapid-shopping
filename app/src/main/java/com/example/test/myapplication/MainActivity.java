@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -36,6 +37,7 @@ public class MainActivity extends AppCompatActivity {
     Vector<Good> goods = new Vector<>();
     LVAdapter adapter;
     ProgressDialog pd;
+    DatabaseOpenHelper db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,11 +70,12 @@ public class MainActivity extends AppCompatActivity {
                                 urlp = item.select("a img[style]").attr("src")+item.select("a img[style]").attr("original");
                                 good.image = getBitmap("http:"+urlp);
                                 good.logo = getDrawable(R.drawable.yhd);
+                                good.site = "yhd";
                                 goods.add(good);
                             }
                             handler.sendEmptyMessage(0x0001);
                         } catch (Exception e) {
-                            Toast.makeText(MainActivity.this, "Error: " + e, Toast.LENGTH_SHORT);
+                            Toast.makeText(MainActivity.this, "Error: " + e, Toast.LENGTH_SHORT).show();
                         }
                     }
                 }).start();
@@ -93,15 +96,36 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         };
+
+        db = new DatabaseOpenHelper(this, "rp_db.db3", 1);
+
+        goodsList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int positon, long id) {
+                Good good = goods.get(positon);
+                if (db.insertGood(good) != -1) {
+                    Toast.makeText(MainActivity.this, "收藏成功 :)", Toast.LENGTH_SHORT).show();
+                    System.out.println("success");
+                }
+                else {
+                    Toast.makeText(MainActivity.this, "操作失败 :(", Toast.LENGTH_SHORT).show();
+                }
+
+                return true;
+            }
+        });
+
     }
 
-    class Good
+    @Override
+    public void onDestroy()
     {
-        String name;
-        String price;
-        Bitmap image;
-        Drawable logo;
+        super.onDestroy();
+        if (db != null) {
+            db.close();
+        }
     }
+
 
     class ViewHolder
     {
