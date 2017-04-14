@@ -2,18 +2,21 @@ package com.example.test.myapplication;
 
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Bundle;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.SearchView;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -38,17 +41,22 @@ public class MainActivity extends AppCompatActivity {
     LVAdapter adapter;
     ProgressDialog pd;
     DatabaseOpenHelper db;
+    SearchView searchView;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+    public boolean onCreateOptionsMenu(Menu menu)
+    {
+        getMenuInflater().inflate(R.layout.menu, menu);
+        MenuItem menuItem = menu.findItem(R.id.search);
+        searchView = (SearchView) MenuItemCompat.getActionView(menuItem);
 
-        Button bn = (Button) findViewById(R.id.button);
-        bn.setOnClickListener(new View.OnClickListener() {
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener()
+        {
             @Override
-            public void onClick(View v) {
+            public boolean onQueryTextSubmit(String query)
+            {
                 pd = ProgressDialog.show(MainActivity.this, "Searching", "Wait plz... :)");
+                final String keyword = query;
 
                 new Thread(new Runnable() {
                     @Override
@@ -56,10 +64,9 @@ public class MainActivity extends AppCompatActivity {
 
                         Document doc;
                         try {
-                            TextView editText = (TextView) findViewById(R.id.editText);
                             String url1 = "http://search.yhd.com/c0-0/k";
                             String url2 = "/?tp=2279.1.12.0.3.LhNe3k^-10-CDFEj";
-                            doc = Jsoup.connect(url1 + editText.getText() + url2).get();
+                            doc = Jsoup.connect(url1 + keyword + url2).get();
                             String urlp = "";
                             Elements items = doc.select("div.mod_search_pro");
                             goods.clear();
@@ -69,7 +76,7 @@ public class MainActivity extends AppCompatActivity {
                                 good.price  = item.select("p.proPrice").select("em").text();
                                 urlp = item.select("a img[style]").attr("src")+item.select("a img[style]").attr("original");
                                 good.image = getBitmap("http:"+urlp);
-                                good.logo = getDrawable(R.drawable.yhd);
+                                good.logo = R.drawable.yhd;
                                 good.site = "yhd";
                                 goods.add(good);
                             }
@@ -79,9 +86,25 @@ public class MainActivity extends AppCompatActivity {
                         }
                     }
                 }).start();
+                return false;
             }
 
+            @Override
+            public boolean onQueryTextChange(String newText)
+            {
+                return false;
+            }
         });
+
+        return super.onCreateOptionsMenu(menu);
+    }
+
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
 
         adapter = new LVAdapter();
         goodsList = (ListView) findViewById(R.id.goodsList);
@@ -105,7 +128,6 @@ public class MainActivity extends AppCompatActivity {
                 Good good = goods.get(positon);
                 if (db.insertGood(good) != -1) {
                     Toast.makeText(MainActivity.this, "收藏成功 :)", Toast.LENGTH_SHORT).show();
-                    System.out.println("success");
                 }
                 else {
                     Toast.makeText(MainActivity.this, "操作失败 :(", Toast.LENGTH_SHORT).show();
@@ -126,14 +148,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-
-    class ViewHolder
-    {
-        TextView name;
-        TextView price;
-        ImageView image;
-        ImageView logo;
-    }
 
     class LVAdapter extends BaseAdapter
     {
@@ -175,8 +189,22 @@ public class MainActivity extends AppCompatActivity {
             viewHolder.name.setText(good.name);
             viewHolder.price.setText(good.price);
             viewHolder.image.setImageBitmap(good.image);
-            viewHolder.logo.setImageDrawable(good.logo);
+            viewHolder.logo.setImageResource(good.logo);
             return convertView;
+        }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item)
+    {
+        switch (item.getItemId()) {
+            case R.id.collection:
+                Intent intent = new Intent();
+                intent.setClass(MainActivity.this, CollectionActivity.class);
+                startActivity(intent);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
     }
 

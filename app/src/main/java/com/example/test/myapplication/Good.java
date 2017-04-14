@@ -1,13 +1,14 @@
 package com.example.test.myapplication;
 
 import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 
 public class Good {
     String name;
     String price;
     Bitmap image;
-    Drawable logo;
+    int logo;
     String site;
 }

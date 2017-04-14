@@ -2,11 +2,18 @@ package com.example.test.myapplication;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 
 import java.io.ByteArrayOutputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 
 public class DatabaseOpenHelper extends SQLiteOpenHelper {
@@ -47,4 +54,12 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
         image.compress(Bitmap.CompressFormat.PNG, 100, baos);
         return baos.toByteArray();
     }
+
+    public Cursor getCollection()
+    {
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = db.query(false, "collection", null, null, null, null, null, null, null);
+        return cursor;
+    }
+
 }
