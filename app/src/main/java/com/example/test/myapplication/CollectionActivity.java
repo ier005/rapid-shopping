@@ -48,8 +48,8 @@ public class CollectionActivity extends AppCompatActivity {
                 cursor.moveToPosition(position);
                 if (db.getReadableDatabase().delete("collection", "id=?", new String[] {cursor.getString(cursor.getColumnIndex("id"))}) != 0) {
                     Toast.makeText(CollectionActivity.this, "删除成功 :)", Toast.LENGTH_SHORT).show();
-                    CollectionActivity.this.finish();
-                    CollectionActivity.this.startActivity(CollectionActivity.this.getIntent());
+                    cursor = db.getCollection();
+                    adapter.notifyDataSetChanged();
                 }
                 else {
                     Toast.makeText(CollectionActivity.this, "操作失败 :(", Toast.LENGTH_SHORT).show();
