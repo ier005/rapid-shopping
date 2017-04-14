@@ -2,6 +2,7 @@ package com.example.test.myapplication;
 
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
@@ -18,6 +19,9 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.webkit.WebView;
+import android.webkit.WebSettings;
+import android.webkit.WebViewClient;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -38,6 +42,7 @@ public class MainActivity extends AppCompatActivity {
     LVAdapter adapter;
     ProgressDialog pd;
     DatabaseOpenHelper db;
+    WebView web_view;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,6 +75,7 @@ public class MainActivity extends AppCompatActivity {
                                 urlp = item.select("a img[style]").attr("src")+item.select("a img[style]").attr("original");
                                 good.image = getBitmap("http:"+urlp);
                                 good.logo = getDrawable(R.drawable.yhd);
+                                good.url =item.select("p.proName.clearfix").select("a").attr("href");
                                 good.site = "yhd";
                                 goods.add(good);
                             }
@@ -98,6 +104,17 @@ public class MainActivity extends AppCompatActivity {
         };
 
         db = new DatabaseOpenHelper(this, "rp_db.db3", 1);
+        goodsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id)
+            {
+                Intent intent=new Intent(MainActivity.this,web.class);
+                intent.putExtra("url",goods.get(position).url);
+                startActivity(intent);
+            }
+
+
+        });
 
         goodsList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
@@ -131,8 +148,10 @@ public class MainActivity extends AppCompatActivity {
     {
         TextView name;
         TextView price;
+
         ImageView image;
         ImageView logo;
+        TextView url;
     }
 
     class LVAdapter extends BaseAdapter

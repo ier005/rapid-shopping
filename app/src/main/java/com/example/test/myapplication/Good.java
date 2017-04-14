@@ -9,5 +9,6 @@ public class Good {
     String price;
     Bitmap image;
     Drawable logo;
+    String url;
     String site;
 }
