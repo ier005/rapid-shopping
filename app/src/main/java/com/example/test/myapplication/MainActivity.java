@@ -21,6 +21,9 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.webkit.WebView;
+import android.webkit.WebSettings;
+import android.webkit.WebViewClient;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -42,6 +45,7 @@ public class MainActivity extends AppCompatActivity {
     ProgressDialog pd;
     DatabaseOpenHelper db;
     SearchView searchView;
+    WebView web_view;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu)
@@ -76,7 +80,11 @@ public class MainActivity extends AppCompatActivity {
                                 good.price  = item.select("p.proPrice").select("em").text();
                                 urlp = item.select("a img[style]").attr("src")+item.select("a img[style]").attr("original");
                                 good.image = getBitmap("http:"+urlp);
+
                                 good.logo = R.drawable.yhd;
+
+                                good.url =item.select("p.proName.clearfix").select("a").attr("href");
+
                                 good.site = "yhd";
                                 goods.add(good);
                             }
@@ -120,7 +128,18 @@ public class MainActivity extends AppCompatActivity {
             }
         };
 
-        db = new DatabaseOpenHelper(this, "rp_db.db3", 1);
+        db = new DatabaseOpenHelper(this, "rp_db.db3", 2);
+        goodsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id)
+            {
+                Intent intent=new Intent(MainActivity.this,web.class);
+                intent.putExtra("url",goods.get(position).url);
+                startActivity(intent);
+            }
+
+
+        });
 
         goodsList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
@@ -147,6 +166,7 @@ public class MainActivity extends AppCompatActivity {
             db.close();
         }
     }
+
 
 
     class LVAdapter extends BaseAdapter

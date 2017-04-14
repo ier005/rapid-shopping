@@ -20,13 +20,13 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db)
     {
-        db.execSQL("CREATE TABLE collection (id integer primary key autoincrement, name varchar(200), price varchar(20), image blob, site varchar(10))");
+        db.execSQL("CREATE TABLE collection (id integer primary key autoincrement, name varchar(200), price varchar(20), image blob, site varchar(10), url varchar(100))");
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion)
     {
-        db.execSQL("DROP TABLE IF EXISTS person");
+        db.execSQL("DROP TABLE IF EXISTS collection");
         onCreate(db);
     }
 
@@ -38,6 +38,7 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
         cv.put("name", good.name);
         cv.put("price", good.price);
         cv.put("site", good.site);
+        cv.put("url", good.url);
         long result = db.insert("collection", null, cv);
         return result;
     }

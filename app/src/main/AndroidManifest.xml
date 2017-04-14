@@ -15,9 +15,27 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity android:name=".CollectionActivity"
 
             android:label="Collection" />
+
+        <activity
+
+            android:name=".web"
+
+            android:label="web">
+
+            <intent-filter>
+
+                <action android:name="com.litreily.SecondActivity"/>
+
+                <category android:name="android.intent.category.DEFAULT"/>
+
+            </intent-filter>
+
+        </activity>
+
     </application>
 
     <uses-permission android:name="android.permission.INTERNET" />

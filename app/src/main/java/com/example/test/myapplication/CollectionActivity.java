@@ -1,6 +1,7 @@
 package com.example.test.myapplication;
 
 
+import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -36,11 +37,25 @@ public class CollectionActivity extends AppCompatActivity {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
 
-        db = new DatabaseOpenHelper(this, "rp_db.db3", 1);
+        db = new DatabaseOpenHelper(this, "rp_db.db3", 2);
         cursor = db.getCollection();
         collectionList = (ListView) findViewById(R.id.collectionList);
         adapter = new LVAdapter();
         collectionList.setAdapter(adapter);
+
+        collectionList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id)
+            {
+                cursor.moveToPosition(position);
+                Intent intent=new Intent(CollectionActivity.this,web.class);
+
+                intent.putExtra("url",cursor.getString(cursor.getColumnIndex("url")));
+                startActivity(intent);
+            }
+
+        });
+
 
         collectionList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override

@@ -7,6 +7,8 @@ public class Good {
     String name;
     String price;
     Bitmap image;
+
     int logo;
+    String url;
     String site;
 }
