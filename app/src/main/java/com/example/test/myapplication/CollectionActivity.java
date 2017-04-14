@@ -4,13 +4,17 @@ package com.example.test.myapplication;
 import android.database.Cursor;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
 public class CollectionActivity extends AppCompatActivity {
@@ -26,12 +30,44 @@ public class CollectionActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_collection);
 
+        android.support.v7.app.ActionBar actionBar = getSupportActionBar();
+        if(actionBar != null){
+            actionBar.setHomeButtonEnabled(true);
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
+
         db = new DatabaseOpenHelper(this, "rp_db.db3", 1);
         cursor = db.getCollection();
         collectionList = (ListView) findViewById(R.id.collectionList);
         adapter = new LVAdapter();
         collectionList.setAdapter(adapter);
-        adapter.notifyDataSetChanged();
+
+        collectionList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                cursor.moveToPosition(position);
+                if (db.getReadableDatabase().delete("collection", "id=?", new String[] {cursor.getString(cursor.getColumnIndex("id"))}) != 0) {
+                    Toast.makeText(CollectionActivity.this, "删除成功 :)", Toast.LENGTH_SHORT).show();
+                    CollectionActivity.this.finish();
+                    CollectionActivity.this.startActivity(CollectionActivity.this.getIntent());
+                }
+                else {
+                    Toast.makeText(CollectionActivity.this, "操作失败 :(", Toast.LENGTH_SHORT).show();
+                }
+
+                return true;
+            }
+        });
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                this.finish(); // back button
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override

@@ -1,8 +1,6 @@
 package com.example.test.myapplication;
 
 import android.graphics.Bitmap;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 
 public class Good {
