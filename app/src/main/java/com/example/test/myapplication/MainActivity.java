@@ -66,28 +66,62 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void run() {
 
-                        Document doc;
+                        Document doc_yhd,doc_ymx,doc_jd;
                         try {
-                            String url1 = "http://search.yhd.com/c0-0/k";
-                            String url2 = "/?tp=2279.1.12.0.3.LhNe3k^-10-CDFEj";
-                            doc = Jsoup.connect(url1 + keyword + url2).get();
-                            String urlp = "";
-                            Elements items = doc.select("div.mod_search_pro");
+
+                            String url_jd = "https://search.jd.com/Search?keyword="+keyword+"&enc=utf-8"+"&psort="+"2"+"&click=0";//销量3新品5价格升序2价格降序1
+                            String url_yhd = "http://search.yhd.com/c0-0-0/b/a-s"+"3"+"-v4-p1-price-d0-f0-m1-rt0-pid-mid0-k"+keyword;//销量2新品6,价格升序3降序4
+                            String url_ymx = "https://www.amazon.cn/s/ref=sr_st_"+"price-asc-rank"+"?__mk_zh_CN=亚马逊网站&url=search-alias%3Daps&field-keywords="+keyword+"&sort="+"price-asc-rank";
+                            //relevanceblender相关性 date_desc_rank新品  price-asc-rank升序 price-desc-rank降序
+
+                            doc_jd = Jsoup.connect(url_jd).get();
+                            doc_yhd = Jsoup.connect(url_yhd).get();
+                            doc_ymx = Jsoup.connect(url_ymx).get();
+                            String urlp_yhd = "";
+                            String urlp_ymx = "";
+                            String urlp_jd = "";
+                            Elements items_jd = doc_jd.select("li.gl-item");
+                            Elements items_yhd = doc_yhd.select("div.mod_search_pro");
+                            Elements items_ymx = doc_ymx.select("li.s-result-item");
                             goods.clear();
-                            for (Element item : items) {
-                                Good good = new Good();
-                                good.name = item.select("p.proName.clearfix").text();
-                                good.price  = item.select("p.proPrice").select("em").text();
-                                urlp = item.select("a img[style]").attr("src")+item.select("a img[style]").attr("original");
-                                good.image = getBitmap("http:"+urlp);
-
-                                good.logo = R.drawable.yhd;
-
-                                good.url =item.select("p.proName.clearfix").select("a").attr("href");
-
-                                good.site = "yhd";
-                                goods.add(good);
+                            
+                            for (int i = 0 ;i<5;i++) {
+                                Good good_yhd = new Good();
+                                good_yhd.name = items_yhd.select("p.proName.clearfix").get(i).text();
+                                good_yhd.price  = items_yhd.select("p.proPrice").select("em").get(i).text();
+                                urlp_yhd = items_yhd.select("a img[style]").get(i).attr("src")+items_yhd.select("a img[style]").get(i).attr("original");
+                                good_yhd.image = getBitmap("http:"+urlp_yhd);
+                                good_yhd.logo = R.drawable.yhd;
+                                good_yhd.url = items_yhd.select("p.proName.clearfix").select("a").get(i).attr("href");
+                                good_yhd.site = "yhd";
+                                goods.add(good_yhd);
                             }
+                            for (int i = 0 ;i<5;i++) {
+                                Good good_ymx = new Good();
+                                good_ymx.name = items_ymx.select(".s-access-title").get(i).text();
+                                good_ymx.price = items_ymx.select("span.s-price").get(i).text();
+                                urlp_ymx = items_ymx.select("img").get(i).attr("src");
+                                good_ymx.image = getBitmap(urlp_ymx);
+                                good_ymx.logo = R.drawable.ymx;
+                                good_ymx.url = items_ymx.select("a").get(i).attr("href");
+                                good_ymx.site = "ymx";
+                                goods.add(good_ymx);
+
+                            }
+
+                            for(int i =0 ;i<5;i++){
+                                Good good_jd = new Good();
+                                urlp_jd = items_jd.select("div.p-img a img").get(i).attr("src")+items_jd.select("div.p-img a img").get(i).attr("data-lazy-img");
+                                good_jd.name = items_jd.select("div.p-name").select("a").get(i).text();
+                                good_jd.price = items_jd.select("div.p-price").get(i).text();
+                                good_jd.image = getBitmap("http:"+urlp_jd);
+                                good_jd.logo = R.drawable.jd;
+                                good_jd.url = items_jd.select("div.p-img").get(i).attr("href");
+                                good_jd.site = "jd";
+                                goods.add(good_jd);
+                            }
+
+
                             handler.sendEmptyMessage(0x0001);
                         } catch (Exception e) {
                             Toast.makeText(MainActivity.this, "Error: " + e, Toast.LENGTH_SHORT).show();
