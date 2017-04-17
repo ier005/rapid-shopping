@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/search"
+        app:actionViewClass="android.support.v7.widget.SearchView"
+        android:icon="@drawable/ic_search"
+        android:orderInCategory="100"
+        android:title="搜索"
+        app:showAsAction="always|collapseActionView" />
+    <item
+        android:id="@+id/collection"
+        android:icon="@drawable/ic_star"
+        android:orderInCategory="200"
+        android:title="收藏"
+        app:showAsAction="always" />
+    <item android:id="@+id/sort_all"
+        android:title="综合排序"
+        android:showAsAction="ifRoom" />
+    <item android:id="@+id/sort_asc"
+        android:title="价格升序排序"
+        android:showAsAction="ifRoom" />
+    <item android:id="@+id/sort_desc"
+        android:title="价格降序排序"
+        android:showAsAction="ifRoom" />
+    <item android:id="@+id/sort_sale"
+        android:title="销量"
+        android:showAsAction="ifRoom" />
+    <item android:id="@+id/sort_new"
+        android:title="新品"
+        android:showAsAction="ifRoom" />
+</menu>
