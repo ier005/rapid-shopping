@@ -14,7 +14,9 @@ import android.support.v7.widget.ShareActionProvider;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.webkit.WebBackForwardList;
+import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebSettings;
 import android.webkit.WebViewClient;
@@ -34,10 +36,19 @@ public class web extends AppCompatActivity {
 
         WebSettings webSettings = webView.getSettings();
         webSettings.setJavaScriptEnabled(true);//允许运行JavaScript
-
+        webSettings.setBuiltInZoomControls(true);
+        webSettings.setSupportZoom(true);
+        webSettings.setUseWideViewPort(true);//设置此属性，可任意比例缩放
+        webSettings.setLoadWithOverviewMode(true);
+        webView.setInitialScale(50);
         webView.loadUrl(intent.getStringExtra("url"));             //加载外网
         webView.setWebViewClient(new HelloWebViewClient ());
-
+        webView.setWebChromeClient(new WebChromeClient() {
+            // Set progress bar during loading
+            public void onProgressChanged(WebView view, int progress) {
+                web.this.setProgress(progress * 100);
+            }
+        });
     }
 
     @Override
@@ -94,6 +105,20 @@ public class web extends AppCompatActivity {
             return true;
         }
     }
+    public void reload(View v) {
+        webView.reload();
+    }
 
+    public void stop(View v) {
+        webView.stopLoading();
+    }
+
+    public void back(View v) {
+        webView.goBack();
+    }
+
+    public void forward(View v) {
+        webView.goForward();
+    }
 
 }

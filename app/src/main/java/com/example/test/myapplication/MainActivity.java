@@ -46,11 +46,13 @@ public class MainActivity extends AppCompatActivity {
     ProgressDialog pd;
     DatabaseOpenHelper db;
     SearchView searchView;
-    WebView web_view;
     String query_sort;
     int flag = -1;
     SharedPreferences user;
-
+    ImageView image_yhd;
+    ImageView image_jd;
+    ImageView image_ymx;
+    private TextView title;
     @Override
     public boolean onCreateOptionsMenu(Menu menu)
     {
@@ -63,6 +65,15 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onQueryTextSubmit(String query)
             {
+                image_yhd= (ImageView)findViewById(R.id.yhd);
+                image_ymx= (ImageView)findViewById(R.id.ymx);
+                image_jd= (ImageView)findViewById(R.id.jd);
+                title = (TextView)findViewById(R.id.title);
+                title.setVisibility(View.INVISIBLE);
+                image_yhd.setVisibility(View.INVISIBLE);
+                image_jd.setVisibility(View.INVISIBLE);
+                image_ymx.setVisibility(View.INVISIBLE);
+
                 query_sort = query;
                 pd = ProgressDialog.show(MainActivity.this, "Searching", "Wait plz... :)");
                 final String keyword = query;
@@ -153,6 +164,40 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        title = (TextView)findViewById(R.id.title);
+        String html="快速链接";
+        title.setText(html);
+
+
+        image_yhd= (ImageView)findViewById(R.id.yhd);
+        image_ymx= (ImageView)findViewById(R.id.ymx);
+        image_jd= (ImageView)findViewById(R.id.jd);
+
+        image_yhd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent=new Intent(MainActivity.this,web.class);
+                intent.putExtra("url","http://www.yhd.com");
+                startActivity(intent);
+            }
+        });
+        image_ymx.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Intent intent=new Intent(MainActivity.this,web.class);
+                intent.putExtra("url","http://www.amazon.cn");
+                startActivity(intent);
+            }
+        });
+        image_jd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent=new Intent(MainActivity.this,web.class);
+                intent.putExtra("url","http://www.jd.com");
+                startActivity(intent);
+            }
+        });
 
         adapter = new LVAdapter();
         goodsList = (ListView) findViewById(R.id.goodsList);

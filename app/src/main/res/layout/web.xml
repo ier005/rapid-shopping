@@ -6,5 +6,47 @@
         android:id="@+id/webView"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
+        android:layout_weight="1"
         />
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="#FFFFFF"
+        android:orientation="horizontal"
+        android:gravity="center" >
+
+        <ImageView
+            android:id="@+id/back"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:layout_weight="1"
+            android:onClick="back"
+
+            android:src="@drawable/back"/>
+
+        <ImageView
+            android:id="@+id/forward"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:layout_weight="1"
+            android:onClick="forward"
+            android:src="@drawable/forward"/>
+
+        <ImageView
+            android:id="@+id/stop"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:layout_weight="1"
+            android:onClick="stop"
+            android:src="@drawable/stop"/>
+
+        <ImageView
+            android:id="@+id/reload"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:layout_weight="1"
+            android:onClick="reload"
+            android:src="@drawable/reload"/>
+
+    </LinearLayout>
 </LinearLayout>
