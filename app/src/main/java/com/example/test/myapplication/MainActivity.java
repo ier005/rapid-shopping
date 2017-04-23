@@ -3,6 +3,7 @@ package com.example.test.myapplication;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Handler;
@@ -48,6 +49,7 @@ public class MainActivity extends AppCompatActivity {
     WebView web_view;
     String query_sort;
     int flag = -1;
+    SharedPreferences user;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu)
@@ -166,7 +168,7 @@ public class MainActivity extends AppCompatActivity {
             }
         };
 
-        db = new DatabaseOpenHelper(this, "rp_db.db3", 2);
+        db = new DatabaseOpenHelper(this, "rp_db.db3", 3);
         goodsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id)
@@ -193,6 +195,13 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             }
         });
+
+        user = getSharedPreferences("user", 0);
+        String name = user.getString("name", null);
+        if (name == null) {
+            Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+            startActivity(intent);
+        }
 
     }
 

@@ -2,11 +2,15 @@ package com.example.test.myapplication;
 
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.ShareActionProvider;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,6 +28,7 @@ public class CollectionActivity extends AppCompatActivity {
     ListView collectionList;
     LVAdapter adapter;
     Cursor cursor;
+    SharedPreferences user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -37,7 +42,7 @@ public class CollectionActivity extends AppCompatActivity {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
 
-        db = new DatabaseOpenHelper(this, "rp_db.db3", 2);
+        db = new DatabaseOpenHelper(this, "rp_db.db3", 3);
         cursor = db.getCollection();
         collectionList = (ListView) findViewById(R.id.collectionList);
         adapter = new LVAdapter();
@@ -73,6 +78,37 @@ public class CollectionActivity extends AppCompatActivity {
                 return true;
             }
         });
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate menu resource file.
+        getMenuInflater().inflate(R.menu.menu_user, menu);
+
+        // Locate MenuItem with ShareActionProvider
+        MenuItem item_name = menu.findItem(R.id.user_name);
+        MenuItem item_logout = menu.findItem(R.id.logout);
+
+        user = getSharedPreferences("user", 0);
+        String name = user.getString("name", null);
+        item_name.setTitle(name);
+
+        item_logout.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                user = getSharedPreferences("user", 0);
+                SharedPreferences.Editor editor = user.edit();
+                editor.remove("name");
+                editor.commit();
+                Intent intent = new Intent(CollectionActivity.this, LoginActivity.class);
+                startActivity(intent);
+                CollectionActivity.this.finish();
+                return false;
+            }
+        });
+
+        // Return true to display menu
+        return true;
     }
 
     @Override

@@ -20,6 +20,9 @@
 
             android:label="Collection" />
 
+        <activity android:name=".LoginActivity" android:theme="@style/AppTheme" />
+        <activity android:name=".SignupActivity" android:theme="@style/AppTheme" />
+
         <activity
 
             android:name=".web"
